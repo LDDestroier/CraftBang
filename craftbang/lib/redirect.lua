@@ -35,6 +35,51 @@ local redirectBufferBase = {
 			end
 		end,
 
+	blit=
+		function(buffer, char, text, back)
+			--error("penis")
+			assert(type(char) == "string", "bad argument #1 (expected string, got " .. type(char)..")")
+			assert(type(text) == "string", "bad argument #2 (expected string, got " .. type(text)..")")
+			assert(type(back) == "string", "bad argument #3 (expected string, got " .. type(back)..")")
+			assert(#char == #text and #text == #back, "Arguments must be the same length")
+			local btc = {
+				["0"] = colors.white,
+				["1"] = colors.orange,
+				["2"] = colors.magenta,
+				["3"] = colors.lightBlue,
+				["4"] = colors.yellow,
+				["5"] = colors.lime,
+				["6"] = colors.pink,
+				["7"] = colors.gray,
+				["8"] = colors.lightGray,
+				["9"] = colors.cyan,
+				["a"] = colors.purple,
+				["b"] = colors.blue,
+				["c"] = colors.brown,
+				["d"] = colors.green,
+				["e"] = colors.red,
+				["f"] = colors.black
+			}
+			local cx=buffer.curX
+			for i = 1, #char do
+				if cx <= buffer.width then
+					buffer[buffer.curY][cx].char = char:sub(i,i)
+					buffer[buffer.curY][cx].textColor = btc[text:sub(i,i)] or colors.white
+					buffer[buffer.curY][cx].backgroundColor = btc[back:sub(i,i)] or colors.black
+					cx = cx + 1
+				end
+			end
+			buffer[buffer.curY].isDirty = true
+			buffer.curX=cx
+			if buffer.isActive then
+				buffer.drawDirty()
+				if not buffer.cursorBlink then
+					trueCursor={cx+buffer.scrX-1,cy+buffer.scrY-1}
+					term.native.setCursorPos(unpack(trueCursor))
+				end
+			end
+		end,
+
 	setCursorPos=
 		function(buffer,x,y)
 			if x == nil and y == nil then
@@ -69,7 +114,7 @@ local redirectBufferBase = {
 			end
 			if buffer.isActive then
 				term.redirect(term.native)
-				buffer.blit()
+				buffer.render()
 				term.restore()
 			end
 		end,
@@ -93,7 +138,7 @@ local redirectBufferBase = {
 			end
 			if buffer.isActive then
 				term.redirect(term.native)
-				buffer.blit()
+				buffer.render()
 				term.restore()
 			end
 		end,
@@ -268,8 +313,8 @@ local redirectBufferBase = {
 			end
 		end,
 
-	blit=
-		function(buffer,sx,sy,dx, dy, width,height)
+	render=
+		function(buffer, sx, sy, dx, dy, width,height)
 			sx=sx or 1
 			sy=sy or 1
 			dx=dx or buffer.scrX
@@ -317,7 +362,7 @@ local redirectBufferBase = {
 			for y=1,buffer.height do
 				if buffer[y].isDirty then
 					term.redirect(term.native)
-					buffer.blit(1,y,buffer.scrX,buffer.scrY+y-1,buffer.width,buffer.height)
+					buffer.render(1,y,buffer.scrX,buffer.scrY+y-1,buffer.width,buffer.height)
 					term.restore()
 					buffer[y].isDirty=false
 				end
@@ -332,7 +377,7 @@ local redirectBufferBase = {
 			buffer.scrX=posX
 			buffer.scrY=posY
 			term.redirect(term.native)
-			buffer.blit(1,1,posX,posY,buffer.width,buffer.height)
+			buffer.render(1,1,posX,posY,buffer.width,buffer.height)
 			term.setCursorPos(buffer.curX,buffer.curY)
 			term.setCursorBlink(buffer.cursorBlink)
 			term.setTextColor(buffer.textColor)
