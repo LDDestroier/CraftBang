@@ -1,0 +1,38 @@
+if not http then
+	print "It doesn't seem like you have http enabled."
+	print "Enable it first, restart minecraft, then run the installer again."
+	return
+end
+
+local url = "https://github.com/Kingdaro/CraftBang/raw/master/installer"
+local instPath = ".cbinstaller"
+
+print "Downloading installer"
+
+local download = http.get(url)
+if download then
+	local file = fs.open(instPath, 'w')
+	file.write(download.readAll())
+	file.close()
+	download.close()
+
+	shell.run(instPath)
+	fs.delete(instPath)
+
+	for _,v in pairs(rs.getSides()) do
+		disk.eject(v)
+	end
+
+	write "Restart now? [Y/n] "
+	local input = read():lower():sub(1,1)
+	if input == 'n' then
+		print "I'll let you return to your shell then."
+		print "Do what you need to do."
+	else
+		textutils.slowWrite("Goodbye!")
+		sleep(1)
+		os.reboot()
+	end
+else
+	print "Couldn't get installer"
+end
