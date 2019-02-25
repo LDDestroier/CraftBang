@@ -290,7 +290,7 @@ function panel:draw()
 		craftbang.output(text, v.x + v.width/2 - #text/2, v.y)
 
 		if self.activeTask == v then
-			v.buffer.blit()
+			v.buffer.render()
 		end
 	end
 end
