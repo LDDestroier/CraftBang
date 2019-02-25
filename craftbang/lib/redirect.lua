@@ -12,7 +12,7 @@ local redirectBufferBase = {
 					term.native.setCursorPos(cx+buffer.scrX, cy+buffer.scrY)
 				end
 				for i=1,#text do
-					if cx<=buffer.width then
+					if cx<=buffer.width and cx >= 1 then
 						local curCell=buffer[cy][cx]
 						local char,textColor,backgroundColor=string.char(text:byte(i)),buffer.textColor,buffer.backgroundColor
 						if buffer[cy].isDirty or curCell.char~=char or curCell.textColor~=textColor or curCell.backgroundColor~=backgroundColor then
