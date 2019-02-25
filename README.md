@@ -4,14 +4,14 @@ CraftBang is a multitasking desktop environment for ComputerCraft's CraftOS, a p
 
 Any files placed in the /autorun directory will be run by craftbang automatically, each as its own task.
 
-Want to contribute? Fork this project and make a pull request with whatever bit of code you'd like to be a part of CraftBang. All credits will be given where needed.
+Want to contribute? Fork this project (like I did) and make a pull request with whatever bit of code you'd like to be a part of CraftBang. All credits will be given where needed.
 
 
 ## Installation
 
 Simply download the "updater" file from this page, or from pastebin:
 
-    pastebin get reBqWcFr updater
+    pastebin get 3W5WiVJs updater
 
 and run it on your computer. It will download the installer, which will download craftbang files and prompt you for running on startup. You need to have HTTP enabled.
 
